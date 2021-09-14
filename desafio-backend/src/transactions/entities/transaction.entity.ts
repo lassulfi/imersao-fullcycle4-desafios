@@ -11,6 +11,8 @@ export enum TransactionType {
   DEBIT = 'debit',
 }
 
+export const TransactionTypeList: string[] = Object.values(TransactionType);
+
 @Table({
   tableName: 'transactions',
   createdAt: 'created_at',
