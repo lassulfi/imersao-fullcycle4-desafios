@@ -43,6 +43,7 @@ services:
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
       CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_CONNECT_CLUSTER: http://kafka-connect:8083
       PORT: 9021
 
   kafka-connect:
@@ -77,7 +78,7 @@ services:
     # when running this offline, spin up the stack once and then run :
     #   docker cp kafka-connect:/usr/share/confluent-hub-components ./data/connect-jars
     volumes:
-      - $PWD/data:/data
+      - $PWD/.docker/kafka-connect/data:/data
     # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
     command:
       - bash
@@ -108,7 +109,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./.docker/es01:/usr/share/elasticsearch/data
+      - ./.docker/es01/data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     extra_hosts:
@@ -127,13 +128,12 @@ services:
 
   mysql:
     build: ./.docker/mysql
+    command: --server-id=1 --log-bin=/var/lib/mysql/mysql-bin.log
     restart: always
     tty: true
     volumes:
       - ./.docker/mysql/dbdata:/var/lib/mysql
-      - ./.docker/mysql/init.sql:/data/application/init.sql
+      # - ./.docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - MYSQL_DATABASE=fin
       - MYSQL_ROOT_PASSWORD=root
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"

@@ -1,5 +1,6 @@
 .docker/mysql/dbdata/
 
-data/
+.docker/kafka-connect/data/
 
 .docker/es01/
+
